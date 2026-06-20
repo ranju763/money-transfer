@@ -1,0 +1,210 @@
+:host {
+  display: block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.rewards-container {
+  padding: 1.5rem 8vw 3rem;
+  min-height: calc(100vh - 72px);
+  background-color: #f8fafc;
+}
+
+.ls-1 {
+  letter-spacing: 0.05em;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+/* ---- Hero points card ---- */
+.hero-card {
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  color: #fff;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 14px 30px -16px rgba(99, 102, 241, 0.6);
+}
+
+.hero-card::after {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -30px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.hero-card .bi-trophy-fill {
+  font-size: 1.2rem;
+}
+
+.points-number {
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.hero-card .vr {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* ---- Rules card ---- */
+.rules-card {
+  background: #fff;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.rule-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #334155;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 0.6rem 0.8rem;
+}
+
+.rule-item i {
+  color: #22c55e;
+  flex-shrink: 0;
+}
+
+.formula {
+  background: #eff6ff;
+  border: 1px dashed #bae6fd;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #0c4a6e;
+}
+
+/* ---- Panel / table ---- */
+.panel {
+  background: #fff;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  overflow: hidden;
+}
+
+.table thead th {
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 0.75rem;
+  border: none;
+}
+
+.table tbody td {
+  padding: 0.85rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.mini-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e0f2fe, #ede9fe);
+  color: #4f46e5;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.points-pill {
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.border-top-soft {
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ---- Pagination ---- */
+.page-link {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  background: #fff;
+  color: #1e293b !important;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.page-link:hover {
+  background: #f1f5f9 !important;
+}
+
+.page-item.disabled .page-link {
+  opacity: 0.4;
+}
+
+/* ---- Empty ---- */
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+}
+
+.empty-state i {
+  font-size: 2.4rem;
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #cbd5e1;
+}
+
+/* ---- Animation ---- */
+.animate-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+  .rewards-container {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+}

@@ -2,11 +2,17 @@ spring:
   application:
     name: money-transfer-system
 
+  # Loads application-local.yml (git-ignored) by default for local development.
+  # Override with SPRING_PROFILES_ACTIVE or supply the env vars below directly.
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
   datasource:
-    # MySQL connection using environment variables
+    # MySQL connection. Credentials come from environment variables (see .env.example)
+    # or application-local.yml. No secrets are committed to source control.
     url: jdbc:mysql://localhost:3306/money_transfer_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-    username: root
-    password: Root123$
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   sql:
@@ -52,8 +58,8 @@ dummy:
 snowflake:
   enabled: true
   url: jdbc:snowflake://srztpza-sq01845.snowflakecomputing.com
-  user: RAAHULKUMXR
-  password: Raahul16022005
+  user: ${SNOWFLAKE_USER:}
+  password: ${SNOWFLAKE_PASSWORD:}
   database: MONEY_TRANSFER_DW
   schema: ANALYTICS
   warehouse: COMPUTE_WH

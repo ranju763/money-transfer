@@ -1,0 +1,148 @@
+<div class="dashboard-container">
+
+  <!-- Greeting -->
+  <div class="d-flex justify-content-between align-items-end flex-wrap gap-2 mb-4 animate-up">
+    <div>
+      <p class="text-secondary mb-1 small fw-medium">{{ greeting }},</p>
+      <h1 class="h3 fw-bold text-dark mb-0">{{ firstName }} <span class="wave">👋</span></h1>
+    </div>
+    <a routerLink="/transfer" class="btn btn-dark rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2">
+      <i class="bi bi-send-fill"></i> Send Money
+    </a>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="errorMessage()" class="alert alert-danger rounded-4 border-0 d-flex align-items-center gap-2">
+    <i class="bi bi-exclamation-circle-fill"></i> {{ errorMessage() }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading()" class="text-center py-5">
+    <div class="spinner-border text-info" role="status"></div>
+    <p class="text-secondary mt-3 mb-0">Loading your dashboard…</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading() && !errorMessage()">
+
+    <!-- Stat cards -->
+    <div class="row g-3 mb-4">
+      <!-- Balance -->
+      <div class="col-12 col-lg-5">
+        <div class="stat-card balance-card h-100 p-4 rounded-4 animate-up">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <span class="opacity-75 small fw-medium text-uppercase ls-1">Available Balance</span>
+              <h2 class="display-6 fw-bold mb-0 mt-2">
+                {{ showBalance() ? (account()?.balance | currency:'INR':'symbol':'1.2-2') : '₹ ••••••' }}
+              </h2>
+            </div>
+            <button class="btn-eye" (click)="toggleBalance()" [attr.aria-label]="showBalance() ? 'Hide balance' : 'Show balance'">
+              <i class="bi" [ngClass]="showBalance() ? 'bi-eye' : 'bi-eye-slash'"></i>
+            </button>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <span class="account-chip">
+              <i class="bi bi-credit-card-2-front me-1"></i>{{ account()?.id }}
+            </span>
+            <span class="status-pill" [class.locked]="account()?.status !== 'ACTIVE'">
+              <span class="dot"></span>{{ account()?.status }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reward points -->
+      <div class="col-12 col-sm-6 col-lg-4">
+        <a routerLink="/rewards" class="text-decoration-none">
+          <div class="stat-card reward-card h-100 p-4 rounded-4 animate-up delay-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="opacity-75 small fw-medium text-uppercase ls-1">Reward Points</span>
+              <i class="bi bi-trophy-fill fs-5 opacity-75"></i>
+            </div>
+            <h2 class="display-5 fw-bold mb-0 mt-2 d-flex align-items-baseline gap-2">
+              {{ summary()?.totalPoints ?? 0 }}
+              <small class="fs-6 fw-medium opacity-75">pts</small>
+            </h2>
+            <div class="d-flex align-items-center gap-1 mt-3 small fw-medium reward-link">
+              From {{ summary()?.rewardedTransactions ?? 0 }} rewarded transfers
+              <i class="bi bi-arrow-right"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Total sent -->
+      <div class="col-12 col-sm-6 col-lg-3">
+        <div class="stat-card plain-card h-100 p-4 rounded-4 animate-up delay-2">
+          <div class="icon-badge mb-3"><i class="bi bi-arrow-up-right"></i></div>
+          <span class="text-secondary small fw-medium text-uppercase ls-1">Total Sent</span>
+          <h2 class="h3 fw-bold text-dark mb-0 mt-1">{{ totalSent() | currency:'INR':'symbol':'1.0-0' }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity grid -->
+    <div class="row g-3">
+      <!-- Recent transactions -->
+      <div class="col-12 col-lg-7">
+        <div class="panel rounded-4 h-100 animate-up delay-1">
+          <div class="d-flex justify-content-between align-items-center px-4 pt-4 pb-3">
+            <h2 class="h6 fw-bold text-dark mb-0">Recent Activity</h2>
+            <a routerLink="/transactions" class="see-all">View all <i class="bi bi-chevron-right"></i></a>
+          </div>
+
+          <div *ngIf="recentTransactions().length === 0" class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p class="mb-0">No transactions yet</p>
+          </div>
+
+          <div class="list">
+            <div *ngFor="let t of recentTransactions()" class="list-row">
+              <div class="avatar" [class.in]="t.type === 'RECEIVE'">
+                <i class="bi" [ngClass]="t.type === 'SEND' ? 'bi-arrow-up-right' : 'bi-arrow-down-left'"></i>
+              </div>
+              <div class="flex-grow-1 min-w-0">
+                <p class="fw-semibold text-dark mb-0 text-truncate">{{ t.holderName }}</p>
+                <span class="text-secondary small">{{ t.createdOn | date:'dd MMM, hh:mm a' }}</span>
+              </div>
+              <div class="text-end">
+                <p class="fw-bold mb-0" [ngClass]="t.type === 'SEND' ? 'text-dark' : 'text-success'">
+                  {{ t.type === 'SEND' ? '−' : '+' }}{{ t.amount | currency:'INR':'symbol':'1.0-0' }}
+                </p>
+                <span class="badge-soft" [ngClass]="t.status === 'SUCCESS' ? 'ok' : 'fail'">{{ t.status | titlecase }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent rewards -->
+      <div class="col-12 col-lg-5">
+        <div class="panel rounded-4 h-100 animate-up delay-2">
+          <div class="d-flex justify-content-between align-items-center px-4 pt-4 pb-3">
+            <h2 class="h6 fw-bold text-dark mb-0">Recent Rewards</h2>
+            <a routerLink="/rewards" class="see-all">View all <i class="bi bi-chevron-right"></i></a>
+          </div>
+
+          <div *ngIf="recentRewards().length === 0" class="empty-state">
+            <i class="bi bi-gift"></i>
+            <p class="mb-1">No rewards yet</p>
+            <span class="small text-secondary">Send over ₹100 to start earning points</span>
+          </div>
+
+          <div class="list">
+            <div *ngFor="let r of recentRewards()" class="list-row">
+              <div class="avatar reward"><i class="bi bi-star-fill"></i></div>
+              <div class="flex-grow-1 min-w-0">
+                <p class="fw-semibold text-dark mb-0 text-truncate">To {{ r.counterpartyName }}</p>
+                <span class="text-secondary small">{{ r.amount | currency:'INR':'symbol':'1.0-0' }} · {{ r.createdOn | date:'dd MMM' }}</span>
+              </div>
+              <span class="points-pill">+{{ r.points }} pts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

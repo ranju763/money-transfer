@@ -44,6 +44,31 @@
     transition: all 0.3s ease;
 }
 
+.points-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.35rem 0.85rem;
+    border-radius: 99px;
+    box-shadow: 0 4px 12px -4px rgba(99, 102, 241, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+}
+
+.points-pill:hover {
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.6);
+}
+
+.points-pill i {
+    font-size: 0.78rem;
+}
+
     
 @media (max-width: 992px) {
     .greeting {

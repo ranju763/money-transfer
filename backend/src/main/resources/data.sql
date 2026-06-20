@@ -20,3 +20,14 @@ CREATE TABLE IF NOT EXISTS transaction_logs (
     FOREIGN KEY (from_account) REFERENCES accounts(id),
     FOREIGN KEY (to_account) REFERENCES accounts(id)
 );
+
+CREATE TABLE IF NOT EXISTS rewards (
+    id BINARY(16) PRIMARY KEY,
+    account_id VARCHAR(16) NOT NULL,
+    transaction_id BINARY(16) NOT NULL UNIQUE,
+    points INT NOT NULL,
+    transaction_amount DECIMAL(18,2) NOT NULL,
+    created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY (account_id) REFERENCES accounts(id),
+    FOREIGN KEY (transaction_id) REFERENCES transaction_logs(id)
+);

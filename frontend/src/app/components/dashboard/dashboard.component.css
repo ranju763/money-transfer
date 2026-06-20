@@ -1,0 +1,274 @@
+:host {
+  display: block;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.dashboard-container {
+  padding: 1.5rem 8vw 3rem;
+  min-height: calc(100vh - 72px);
+  background-color: #f8fafc;
+}
+
+.ls-1 {
+  letter-spacing: 0.05em;
+}
+
+.wave {
+  display: inline-block;
+  animation: wave 2.2s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  10%, 30% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(-4deg); }
+}
+
+/* ---- Stat cards ---- */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #eef2f7;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.balance-card {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 14px 30px -16px rgba(15, 23, 42, 0.6);
+}
+
+.balance-card::after {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -40px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.btn-eye {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+  z-index: 1;
+}
+
+.btn-eye:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.account-chip {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #cbd5e1;
+  z-index: 1;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  padding: 0.25rem 0.7rem;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  z-index: 1;
+}
+
+.status-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-pill.locked {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+
+.reward-card {
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 14px 30px -16px rgba(99, 102, 241, 0.6);
+}
+
+.reward-card::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  right: -30px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.reward-link {
+  transition: gap 0.2s ease;
+}
+
+.reward-card:hover .reward-link {
+  gap: 0.6rem !important;
+}
+
+.plain-card {
+  background: #fff;
+}
+
+.icon-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #0284c7;
+  font-size: 1.1rem;
+}
+
+/* ---- Panels ---- */
+.panel {
+  background: #fff;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.see-all {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #0ea5e9;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.see-all:hover {
+  color: #0369a1;
+}
+
+.list {
+  padding: 0 0.75rem 0.75rem;
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 1rem;
+  border-radius: 14px;
+  transition: background 0.18s ease;
+}
+
+.list-row:hover {
+  background: #f8fafc;
+}
+
+.min-w-0 {
+  min-width: 0;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.avatar.in {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.avatar.reward {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #fff;
+}
+
+.badge-soft {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.12rem 0.5rem;
+  border-radius: 99px;
+}
+
+.badge-soft.ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-soft.fail {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.points-pill {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+/* ---- Empty states ---- */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #94a3b8;
+}
+
+.empty-state i {
+  font-size: 2.2rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #cbd5e1;
+}
+
+/* ---- Animations ---- */
+.animate-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+  .dashboard-container {
+    padding: 1.25rem 1rem 2.5rem;
+  }
+}

@@ -34,6 +34,9 @@ public class TransferService {
     @Autowired
     private TransactionLogService transactionLogService;
 
+    @Autowired
+    private RewardService rewardService;
+
     /**
      * Execute fund transfer between accounts
      *
@@ -134,6 +137,11 @@ public class TransferService {
         transactionLog = transactionLogRepository.save(transactionLog);
 
         log.info("Transfer completed successfully. Transaction ID: {}", transactionLog.getId());
+
+        // Evaluate and grant rewards for this transaction (atomic with the transfer).
+        // The reward module decides eligibility and points; the transfer is never
+        // affected by reward outcomes.
+        rewardService.evaluateAndGrant(transactionLog);
 
         // Build response
         return TransferResponse.builder()

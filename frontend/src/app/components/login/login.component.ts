@@ -38,7 +38,7 @@ export class LoginComponent {
             this.authService.login(username, password).subscribe({
                 next: (response) => {
                     if (response.ok) {
-                        this.router.navigate(['/transactions']);
+                        this.router.navigate(['/dashboard']);
                     } else {
                         this.errorMessage.set("Invalid credentials")
                     }

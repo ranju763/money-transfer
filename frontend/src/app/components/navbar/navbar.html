@@ -2,24 +2,31 @@
   <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center h-120">
       <div class="d-flex align-items-center gap-4">
-        <div class="header-logo d-flex align-items-center gap-2">
+        <a routerLink="/dashboard" class="header-logo d-flex align-items-center gap-2 text-decoration-none text-dark">
           <div class="logo-box bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
             style="width: 36px; height: 36px;">
             <i class="bi bi-bank2"></i>
           </div>
           <span class="fw-bold h5 mb-0">SwiftPay</span>
-        </div>
+        </a>
 
-        <nav class="d-flex align-items-center gap-2">
+        <nav class="d-flex align-items-center gap-1">
+          <a routerLink="/dashboard" routerLinkActive="active"
+            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Dashboard</a>
           <a routerLink="/transactions" routerLinkActive="active"
             class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transactions</a>
           <a routerLink="/transfer" routerLinkActive="active"
             class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transfer</a>
+          <a routerLink="/rewards" routerLinkActive="active"
+            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Rewards</a>
         </nav>
       </div>
 
       <div class="d-flex align-items-center gap-3">
-        <span class="text-secondary fw-medium me-2 greeting">{{ greeting }}, {{ username() }}</span>
+        <a routerLink="/rewards" class="points-pill text-decoration-none" title="Your reward points">
+          <i class="bi bi-trophy-fill"></i> {{ points() }} pts
+        </a>
+        <span class="text-secondary fw-medium greeting">{{ greeting }}, {{ username() }}</span>
         <button (click)="logout()" class="btn btn-dark btn-sm fw-bold rounded-3">
           Logout
         </button>

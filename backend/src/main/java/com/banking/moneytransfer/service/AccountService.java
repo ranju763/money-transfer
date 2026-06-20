@@ -9,6 +9,7 @@ import com.banking.moneytransfer.model.enums.AccountStatus;
 import com.banking.moneytransfer.model.enums.TransactionStatus;
 import com.banking.moneytransfer.model.enums.TransactionType;
 import com.banking.moneytransfer.repository.AccountRepository;
+import com.banking.moneytransfer.repository.RewardRepository;
 import com.banking.moneytransfer.repository.TransactionLogRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class AccountService {
 
     @Autowired
     private TransactionLogRepository transactionLogRepository;
+
+    @Autowired
+    private RewardRepository rewardRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -141,10 +145,11 @@ public class AccountService {
 
     @Transactional
     public void createDummyAccounts() {
-        // clear existing data
+        // clear existing data (rewards first: they reference transaction_logs and accounts)
+        rewardRepository.deleteAll();
         transactionLogRepository.deleteAll();
         accountRepository.deleteAll();
-        log.info("Delete all entities from accounts and transaction_logs table");
+        log.info("Delete all entities from rewards, accounts and transaction_logs table");
 
         // dummy accounts
         List<Account> accounts = List.of(
