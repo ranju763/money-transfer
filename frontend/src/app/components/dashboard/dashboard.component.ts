@@ -5,12 +5,13 @@ import { forkJoin } from 'rxjs';
 
 import { Account } from '../../models/account.model';
 import { Transaction } from '../../models/transaction.model';
-import { Reward } from '../../models/reward.model';
+import { Redemption } from '../../models/redemption.model';
 import { RewardSummary } from '../../models/reward-summary.model';
 
 import { AuthService } from '../../services/auth.service';
 import { AccountService } from '../../services/account.service';
 import { RewardService } from '../../services/reward.service';
+import { PromotionService } from '../../services/promotion.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -23,26 +24,36 @@ export class DashboardComponent implements OnInit {
     account = signal<Account | null>(null);
     summary = signal<RewardSummary | null>(null);
     allTransactions = signal<Transaction[]>([]);
-    allRewards = signal<Reward[]>([]);
+    redemptions = signal<Redemption[]>([]);
 
     isLoading = signal<boolean>(true);
     errorMessage = signal<string>('');
-    showBalance = signal<boolean>(true);
+
+    // Password-protected balance
+    balanceRevealed = signal<boolean>(false);
+    promptingPassword = signal<boolean>(false);
+    passwordError = signal<string>('');
 
     recentTransactions = computed(() => this.allTransactions().slice(0, 5));
-    recentRewards = computed(() => this.allRewards().slice(0, 5));
+    redeemedCount = computed(() => this.redemptions().length);
 
-    // Total amount the user has successfully sent out.
-    totalSent = computed(() =>
+    earnedThisMonth = computed(() =>
         this.allTransactions()
-            .filter(t => t.type === 'SEND' && t.status === 'SUCCESS')
+            .filter(t => t.type === 'RECEIVE' && t.status === 'SUCCESS' && this.isThisMonth(t.createdOn))
+            .reduce((sum, t) => sum + Number(t.amount), 0)
+    );
+
+    spentThisMonth = computed(() =>
+        this.allTransactions()
+            .filter(t => t.type === 'SEND' && t.status === 'SUCCESS' && this.isThisMonth(t.createdOn))
             .reduce((sum, t) => sum + Number(t.amount), 0)
     );
 
     constructor(
         private authService: AuthService,
         private accountService: AccountService,
-        private rewardService: RewardService
+        private rewardService: RewardService,
+        private promotionService: PromotionService
     ) { }
 
     ngOnInit(): void {
@@ -56,14 +67,14 @@ export class DashboardComponent implements OnInit {
         forkJoin({
             account: this.accountService.fetchAccount(accountId),
             transactions: this.accountService.fetchTransactions(accountId),
-            rewards: this.rewardService.fetchRewards(accountId),
-            summary: this.rewardService.fetchSummary(accountId)
+            summary: this.rewardService.fetchSummary(accountId),
+            redemptions: this.promotionService.fetchRedemptions(accountId)
         }).subscribe({
-            next: ({ account, transactions, rewards, summary }) => {
+            next: ({ account, transactions, summary, redemptions }) => {
                 this.account.set(account);
                 this.allTransactions.set(transactions);
-                this.allRewards.set(rewards);
                 this.summary.set(summary);
+                this.redemptions.set(redemptions);
                 this.isLoading.set(false);
             },
             error: () => {
@@ -73,8 +84,31 @@ export class DashboardComponent implements OnInit {
         });
     }
 
-    toggleBalance(): void {
-        this.showBalance.update(v => !v);
+    private isThisMonth(dateStr: string): boolean {
+        const d = new Date(dateStr);
+        const now = new Date();
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }
+
+    // ---- Balance reveal flow ----
+    promptBalance(): void {
+        this.passwordError.set('');
+        this.promptingPassword.set(true);
+    }
+
+    unlockBalance(password: string): void {
+        if (this.authService.checkPassword(password)) {
+            this.balanceRevealed.set(true);
+            this.promptingPassword.set(false);
+            this.passwordError.set('');
+        } else {
+            this.passwordError.set('Incorrect password');
+        }
+    }
+
+    hideBalance(): void {
+        this.balanceRevealed.set(false);
+        this.promptingPassword.set(false);
     }
 
     get firstName(): string {

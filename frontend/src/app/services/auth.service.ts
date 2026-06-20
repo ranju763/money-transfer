@@ -41,4 +41,19 @@ export class AuthService {
         this.accountId = null;
         this.authToken = null;
     }
+
+    /**
+     * Verify a password against the one used at login (decoded from the Basic token).
+     * Used to gate sensitive views like the balance.
+     */
+    checkPassword(password: string): boolean {
+        if (!this.authToken) return false;
+        try {
+            const decoded = atob(this.authToken.replace('Basic ', ''));
+            const original = decoded.substring(decoded.indexOf(':') + 1);
+            return original.length > 0 && original === password;
+        } catch {
+            return false;
+        }
+    }
 }

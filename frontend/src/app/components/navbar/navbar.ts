@@ -19,7 +19,9 @@ export class Navbar {
   ) {}
 
   username = signal<string>('User');
-  points = signal<number>(0);
+
+  /** Shared, live points total maintained by RewardService (updates after a transfer). */
+  get points() { return this.rewardService.points; }
 
   ngOnInit() {
     if (this.authService.loggedIn) {
@@ -27,9 +29,7 @@ export class Navbar {
         next: (account) => this.username.set(account.holderName),
         error: () => this.router.navigate(['/login'])
       });
-      this.rewardService.fetchSummary(this.authService.accountId!).subscribe({
-        next: (summary) => this.points.set(summary.totalPoints)
-      });
+      this.rewardService.loadPoints(this.authService.accountId!);
     }
   }
 

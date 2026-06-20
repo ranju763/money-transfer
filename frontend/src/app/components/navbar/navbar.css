@@ -1,77 +1,123 @@
 .app-header {
-    height: 60px;
+  height: 72px;
+  background: var(--surface) !important;
+  border-bottom: 1px solid var(--border) !important;
 }
 
-.nav-link {
-    color: #64748b;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
+/* ---- Brand ---- */
+.brand-icon {
+  color: var(--primary);
+  font-size: 1.9rem;
+  line-height: 1;
 }
 
-.nav-link:hover {
-    color: #0ea5e9;
-    background-color: #f0f9ff;
+.brand-name {
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+  color: var(--text);
 }
 
-.app-header {
-    background: #ffffff !important;
-    border-bottom: 1px solid #f1f5f9 !important;
-    margin-bottom: 0.5rem !important;
+/* ---- Nav links (underline active state, no pills) ---- */
+.topnav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  color: var(--n-600);
+  font-size: 1.02rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.18s ease;
 }
 
-.nav-link.active {
-    background-color: #e0f2fe;
-    color: #0369a1 !important;
+.topnav-link:hover {
+  color: var(--primary-700);
 }
 
+.topnav-link.active {
+  color: var(--primary-700);
+  font-weight: 600;
+}
+
+.topnav-link.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2.5px;
+  border-radius: 3px 3px 0 0;
+  background: var(--primary);
+}
+
+/* ---- Points (coin, plain text) ---- */
+.points {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--primary-700);
+  font-weight: 700;
+  font-size: 1.02rem;
+  transition: color 0.18s ease;
+}
+
+.points i {
+  color: var(--primary);
+  font-size: 1.2rem;
+}
+
+.points .points-label {
+  color: var(--n-500);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.points:hover {
+  color: var(--primary-900);
+}
+
+/* ---- Greeting ---- */
+.greeting {
+  font-size: 0.9rem;
+}
+
+/* ---- Exit (logout) icon button ---- */
+.exit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--n-600);
+  transition: all 0.18s ease;
+}
+
+.exit-btn i {
+  font-size: 1.3rem;
+}
+
+.exit-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger-light);
+  background: var(--danger-bg-2);
+}
+
+/* ---- Entrance animation ---- */
 .animate-down {
-    animation: slideInDown 0.5s ease-out;
+  animation: slideInDown 0.5s ease-out;
 }
 
 @keyframes slideInDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-.transition-all {
-    transition: all 0.3s ease;
-}
-
-.points-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: linear-gradient(135deg, #0ea5e9, #6366f1);
-    color: #ffffff;
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 0.35rem 0.85rem;
-    border-radius: 99px;
-    box-shadow: 0 4px 12px -4px rgba(99, 102, 241, 0.5);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    white-space: nowrap;
-}
-
-.points-pill:hover {
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px -4px rgba(99, 102, 241, 0.6);
-}
-
-.points-pill i {
-    font-size: 0.78rem;
-}
-
-    
 @media (max-width: 992px) {
-    .greeting {
-        display: none;
-    }
+  .greeting {
+    display: none;
+  }
 }

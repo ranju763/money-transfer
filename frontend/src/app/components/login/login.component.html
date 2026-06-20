@@ -1,72 +1,102 @@
 <div class="container-fluid p-0 vh-100 overflow-hidden">
     <div class="row g-0 h-100">
+
         <!-- Left Banner Side -->
-        <div class="col-md-6 d-none d-md-flex align-items-center justify-content-center bg-dark text-white banner-side">
-            <div class="banner-content p-5 text-center">
-                <div class="logo-box mb-5 justify-content-center flex-column text-center">
-                    <i class="fas fa-university fa-3x mb-3 text-info"></i>
-                    <h2 class="fw-bold">SwiftPay</h2>
-                </div>
-                <div class="banner-text">
-                    <h1 class="display-3 fw-bolder mb-3">
-                        Transfer money <br>
-                        <span class="text-info">safe, secure and reliable</span>
-                    </h1>
-                    <p class="fs-4 text-secondary mb-5">Experience the next generation of Netbanking</p>
-                </div>
+        <div class="col-md-6 d-none d-md-flex flex-column justify-content-center align-items-center text-center text-white banner-side p-5">
+            <!-- Centered brand -->
+            <div class="brand-lockup">
+                <i class="bi bi-bank2 brand-mark"></i>
+                <span class="brand-name">SwiftPay</span>
+            </div>
+
+            <!-- Hero -->
+            <h1 class="hero-title">
+                Transfer money <br>
+                <span class="highlight">safe, secure and reliable</span>
+            </h1>
+
+            <!-- Rotating feature text (one visible at a time) -->
+            <div class="rotator">
+                <span class="rotator-item"><i class="bi bi-gift"></i> Earn rewards on every transfer</span>
+                <span class="rotator-item"><i class="bi bi-send"></i> Send money to anyone, instantly</span>
+                <span class="rotator-item"><i class="bi bi-card-list"></i> View all your transactions</span>
             </div>
         </div>
 
         <!-- Right Form Side -->
-        <div class="col-md-6 d-flex align-items-center justify-content-center bg-white p-4">
-            <div class="container" style="max-width: 420px;">
-                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()"
-                    class="login-form shadow-lg p-4 rounded-4 border-0 position-relative">
-                    <div class="text-center mb-4">
-                        <h2 class="fw-bold h5">Welcome back to Swiftpay</h2>
-                        <p class="text-muted small">Secure access to your account</p>
-                    </div>
+        <div class="col-12 col-md-6 d-flex align-items-center justify-content-center bg-white p-4">
+            <div class="form-wrap w-100">
+
+                <!-- Brand (shown on mobile where the banner is hidden) -->
+                <div class="d-flex align-items-center gap-2 mb-4 d-md-none">
+                    <div class="logo-badge dark"><i class="bi bi-bank2"></i></div>
+                    <span class="fw-bold fs-5 text-dark">SwiftPay</span>
+                </div>
+
+                <div class="mb-4">
+                    <h2 class="fw-bold h4 text-dark mb-1">Welcome back to SwiftPay</h2>
+                    <p class="text-muted mb-0">Secure access to your account</p>
+                </div>
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+                    <!-- Account Number -->
                     <div class="mb-3">
-                        <label for="username" class="form-label fw-bold text-dark">Account No.</label>
-                        <input type="text" id="username" formControlName="username" accountMask inputmode="numeric"
-                            class="form-control form-control-lg border-2 shadow-none" placeholder="XXXX-XXXX-XXXX">
-                        <div class="error-message text-danger">
-                            <div *ngIf="submitted() || loginForm.controls['username']?.touched">
-                                <div *ngIf="loginForm.controls['username']?.errors?.['required']">Account no. is required</div>
-                                <div *ngIf="loginForm.controls['username']?.errors?.['minlength'] || loginForm.controls['username']?.errors?.['maxLength']">
-                                    Account no. must be 12 digits
-                                </div>
-                            </div>
+                        <label for="username" class="form-label fw-semibold text-dark">Account Number</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-credit-card-2-front field-icon"></i>
+                            <input type="text" id="username" formControlName="username" accountMask inputmode="numeric"
+                                autocomplete="username"
+                                [class.is-invalid]="(submitted() || loginForm.controls['username'].touched) && loginForm.controls['username'].invalid"
+                                class="form-control form-control-lg with-icon" placeholder="XXXX-XXXX-XXXX">
+                        </div>
+                        <div class="field-error"
+                            *ngIf="(submitted() || loginForm.controls['username'].touched) && loginForm.controls['username'].invalid">
+                            <span *ngIf="loginForm.controls['username'].errors?.['required']">Account number is required</span>
+                            <span
+                                *ngIf="loginForm.controls['username'].errors?.['minlength'] || loginForm.controls['username'].errors?.['maxlength']">
+                                Account number must be 12 digits
+                            </span>
                         </div>
                     </div>
 
+                    <!-- Password -->
                     <div class="mb-3">
-                        <label for="password" class="form-label fw-bold text-dark">Password</label>
-                        <input type="password" id="password" formControlName="password"
-                            class="form-control form-control-lg border-2 shadow-none" placeholder="*********">
-                        <div class="error-message text-danger">
-                            <div *ngIf="submitted() || loginForm.controls['password']?.touched">
-                                <div *ngIf="loginForm.controls['password']?.errors?.['required']">Password is required</div>
-                                <div *ngIf="loginForm.controls['password']?.errors?.['minlength']">
-                                    Password must be atleast 8 characters
-                                </div>
-                            </div>
+                        <label for="password" class="form-label fw-semibold text-dark">Password</label>
+                        <div class="field-wrap">
+                            <i class="bi bi-lock field-icon"></i>
+                            <input [type]="showPassword() ? 'text' : 'password'" id="password" formControlName="password"
+                                autocomplete="current-password"
+                                [class.is-invalid]="(submitted() || loginForm.controls['password'].touched) && loginForm.controls['password'].invalid"
+                                class="form-control form-control-lg with-icon with-trail" placeholder="Enter your password">
+                            <button type="button" class="pw-toggle" (click)="togglePassword()"
+                                [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                                <i class="bi" [ngClass]="showPassword() ? 'bi-eye-slash' : 'bi-eye'"></i>
+                            </button>
+                        </div>
+                        <div class="field-error"
+                            *ngIf="(submitted() || loginForm.controls['password'].touched) && loginForm.controls['password'].invalid">
+                            <span *ngIf="loginForm.controls['password'].errors?.['required']">Password is required</span>
+                            <span *ngIf="loginForm.controls['password'].errors?.['minlength']">Password must be at least 8 characters</span>
                         </div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-dark btn-lg rounded-3 fw-bold py-3" [disabled]="isLoading()">
-                            <span *ngIf="!isLoading()">Login to Account</span>
-                            <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
-                        </button>
+                    <!-- Server-side error -->
+                    <div *ngIf="errorMessage().length" class="login-alert">
+                        <i class="bi bi-exclamation-circle-fill"></i> {{ errorMessage() }}
                     </div>
 
-                    <div *ngIf="errorMessage().length != 0" class="text-center mt-2 fadeIn">
-                        <span class="fw-bold error-message text-danger">
-                            {{ errorMessage() }}
-                        </span>
-                    </div>
+                    <button type="submit"
+                        class="btn btn-dark btn-lg w-100 rounded-3 fw-bold py-3 mt-2 d-flex align-items-center justify-content-center gap-2"
+                        [disabled]="isLoading()">
+                        <span *ngIf="isLoading()" class="spinner-border spinner-border-sm"></span>
+                        {{ isLoading() ? 'Signing in…' : 'Login to Account' }}
+                    </button>
                 </form>
+
+                <p class="text-center text-muted small mt-4 mb-0">
+                    <i class="bi bi-shield-check me-1"></i> Your connection is encrypted and secure
+                </p>
             </div>
         </div>
     </div>

@@ -21,4 +21,10 @@ public class RewardSummaryResponse {
 
     /** Number of transactions that earned a reward. */
     private long rewardedTransactions;
+
+    /** Coins already spent on promotion redemptions. */
+    private int redeemedCoins;
+
+    /** Spendable balance = totalPoints − redeemedCoins. */
+    private int availableCoins;
 }

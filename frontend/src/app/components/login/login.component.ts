@@ -17,8 +17,13 @@ export class LoginComponent {
     submitted = signal(false);
     isLoading = signal(false);
     errorMessage = signal("");
+    showPassword = signal(false);
 
     constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+
+    togglePassword(): void {
+        this.showPassword.update(v => !v);
+    }
 
     ngOnInit() {
         this.loginForm = this.fb.group({

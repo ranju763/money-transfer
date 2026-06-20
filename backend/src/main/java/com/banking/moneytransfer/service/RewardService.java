@@ -8,6 +8,7 @@ import com.banking.moneytransfer.model.entity.Reward;
 import com.banking.moneytransfer.model.entity.TransactionLog;
 import com.banking.moneytransfer.model.enums.TransactionStatus;
 import com.banking.moneytransfer.repository.AccountRepository;
+import com.banking.moneytransfer.repository.RedemptionRepository;
 import com.banking.moneytransfer.repository.RewardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,7 @@ public class RewardService {
     public static final BigDecimal POINTS_DIVISOR = new BigDecimal("100");
 
     private final RewardRepository rewardRepository;
+    private final RedemptionRepository redemptionRepository;
     private final AccountRepository accountRepository;
 
     /**
@@ -148,10 +150,15 @@ public class RewardService {
     public RewardSummaryResponse getRewardSummary(String accountId) {
         ensureAccountExists(accountId);
 
+        int earned = rewardRepository.sumPointsByAccount(accountId);
+        int redeemed = redemptionRepository.sumCoinsByAccount(accountId);
+
         return RewardSummaryResponse.builder()
                 .accountId(accountId)
-                .totalPoints(rewardRepository.sumPointsByAccount(accountId))
+                .totalPoints(earned)
                 .rewardedTransactions(rewardRepository.countByAccount_Id(accountId))
+                .redeemedCoins(redeemed)
+                .availableCoins(earned - redeemed)
                 .build();
     }
 

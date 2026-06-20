@@ -5,6 +5,8 @@ import com.banking.moneytransfer.exception.AccountNotActiveException;
 import com.banking.moneytransfer.exception.AccountNotFoundException;
 import com.banking.moneytransfer.exception.DuplicateTransferException;
 import com.banking.moneytransfer.exception.InsufficientBalanceException;
+import com.banking.moneytransfer.exception.InsufficientCoinsException;
+import com.banking.moneytransfer.exception.PromotionNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -59,6 +61,24 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleDuplicateTransferException(DuplicateTransferException ex,
                                                                           HttpServletRequest request) {
         log.error("Duplicate transfer: {}", ex.getMessage());
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(InsufficientCoinsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInsufficientCoinsException(InsufficientCoinsException ex,
+                                                         HttpServletRequest request) {
+        log.error("Insufficient coins: {}", ex.getMessage());
+
+        return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(PromotionNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handlePromotionNotFoundException(PromotionNotFoundException ex,
+                                                          HttpServletRequest request) {
+        log.error("Promotion not found: {}", ex.getMessage());
+
         return new ErrorResponse(ex.getErrorCode(), ex.getMessage(), request.getRequestURI());
     }
 

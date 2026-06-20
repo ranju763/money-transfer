@@ -77,6 +77,19 @@ export class TransactionListComponent implements OnInit {
         return this.filteredTransactions().slice(start, start + this.RECORD_PER_PAGE);
     });
 
+    // ---- Hero summary (across all transactions, not just the current page/filter) ----
+    totalCount = computed(() => this.allTransactions().length);
+    totalSent = computed(() =>
+        this.allTransactions()
+            .filter(t => t.type === 'SEND' && t.status === 'SUCCESS')
+            .reduce((sum, t) => sum + Number(t.amount), 0)
+    );
+    totalReceived = computed(() =>
+        this.allTransactions()
+            .filter(t => t.type === 'RECEIVE' && t.status === 'SUCCESS')
+            .reduce((sum, t) => sum + Number(t.amount), 0)
+    );
+
     constructor(
         private authService: AuthService,
         private accountService: AccountService

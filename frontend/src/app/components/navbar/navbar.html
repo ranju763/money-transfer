@@ -1,34 +1,31 @@
-<header class="app-header shadow-sm bg-white border-bottom py-2 mb-4 sticky-top animate-down">
-  <div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center h-120">
-      <div class="d-flex align-items-center gap-4">
-        <a routerLink="/dashboard" class="header-logo d-flex align-items-center gap-2 text-decoration-none text-dark">
-          <div class="logo-box bg-dark text-white rounded-circle d-flex align-items-center justify-content-center"
-            style="width: 36px; height: 36px;">
-            <i class="bi bi-bank2"></i>
-          </div>
-          <span class="fw-bold h5 mb-0">SwiftPay</span>
+<header class="app-header bg-white border-bottom sticky-top animate-down">
+  <div class="container-fluid px-4 h-100">
+    <div class="d-flex justify-content-between align-items-center h-100">
+
+      <!-- Brand + nav -->
+      <div class="d-flex align-items-center gap-5 h-100">
+        <a routerLink="/dashboard" class="brand d-flex align-items-center gap-2 text-decoration-none">
+          <i class="bi bi-bank2 brand-icon"></i>
+          <span class="brand-name">SwiftPay</span>
         </a>
 
-        <nav class="d-flex align-items-center gap-1">
-          <a routerLink="/dashboard" routerLinkActive="active"
-            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Dashboard</a>
-          <a routerLink="/transactions" routerLinkActive="active"
-            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transactions</a>
-          <a routerLink="/transfer" routerLinkActive="active"
-            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Transfer</a>
-          <a routerLink="/rewards" routerLinkActive="active"
-            class="nav-link px-3 py-2 rounded-pill fw-bold text-decoration-none transition-all">Rewards</a>
+        <nav class="main-nav d-flex align-items-center gap-4 h-100">
+          <a routerLink="/dashboard" routerLinkActive="active" class="topnav-link">Dashboard</a>
+          <a routerLink="/transactions" routerLinkActive="active" class="topnav-link">Transactions</a>
+          <a routerLink="/transfer" routerLinkActive="active" class="topnav-link">Transfer</a>
+          <a routerLink="/rewards" routerLinkActive="active" class="topnav-link">Rewards</a>
         </nav>
       </div>
 
+      <!-- Points + user + exit -->
       <div class="d-flex align-items-center gap-3">
-        <a routerLink="/rewards" class="points-pill text-decoration-none" title="Your reward points">
-          <i class="bi bi-trophy-fill"></i> {{ points() }} pts
+        <a routerLink="/rewards" class="points text-decoration-none" title="Your reward points">
+          <i class="bi bi-coin"></i>
+          <span class="points-val">{{ points() }}</span>
+          <span class="points-label">SwiftCoins</span>
         </a>
-        <span class="text-secondary fw-medium greeting">{{ greeting }}, {{ username() }}</span>
-        <button (click)="logout()" class="btn btn-dark btn-sm fw-bold rounded-3">
-          Logout
+        <button (click)="logout()" class="exit-btn" title="Logout" aria-label="Logout">
+          <i class="bi bi-box-arrow-right"></i>
         </button>
       </div>
     </div>

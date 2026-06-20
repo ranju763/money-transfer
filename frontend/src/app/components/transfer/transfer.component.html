@@ -1,179 +1,127 @@
-<div class="card shadow-sm border-0 animate-up overflow-hidden">
-    <div class="transfer-grid">
-        <!-- Left Side: Form -->
-        <div class="form-side">
-            <!-- SUCCESS VIEW -->
-            <div *ngIf="transferResponse()"
-                class="success-screen fadeIn d-flex flex-column align-items-center text-center py-4">
-                <div class="mb-3">
-                    <div class="success-icon-wrapper mb-2">
-                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3.5rem;"></i>
-                    </div>
-                    <h2 class="h4 fw-bold text-dark m-0">Transfer Successful!</h2>
-                </div>
+<div class="transfer-page">
 
-                <div class="receipt-details w-100 rounded-4 p-4 mb-4 text-start">
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Transaction ID</span>
-                        <span class="font-monospace text-dark fw-bold">{{ transferResponse()?.transactionId
-                            }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-3">
-                        <span class="text-muted">Recipient</span>
-                        <span class="fw-bold text-dark">{{ transferResponse()?.creditedTo }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between border-top pt-3">
-                        <span class="text-muted fw-bold">Amount Sent</span>
-                        <span class="text-success fw-bold h4 mb-0">
-                            {{ transferResponse()?.amount | currency:'INR' }}
-                        </span>
-                    </div>
-                </div>
-
-                <button (click)="resetForm()"
-                    class="btn btn-outline-primary rounded-pill px-5 py-3 fw-bold w-100 transition-all">
-                    Make Another Transfer
-                </button>
-            </div>
-
-            <!-- FAILURE VIEW -->
-            <div *ngIf="failedTransaction()"
-                class="success-screen fadeIn d-flex flex-column align-items-center text-center py-4">
-                <div class="mb-3">
-                    <div class="success-icon-wrapper mb-2">
-                        <i class="bi bi-x-circle-fill text-danger" style="font-size: 3.5rem;"></i>
-                    </div>
-                    <h2 class="h4 fw-bold text-dark m-0">Transfer Failed</h2>
-                    <p class="text-secondary small mt-2">We couldn't complete your payment</p>
-                </div>
-
-                <div class="receipt-details w-100 rounded-4 p-4 mb-4 text-start border-danger"
-                    style="background-color: #fff5f5 !important; border: 1px dashed #dc3545 !important;">
-                    <div class="mb-3">
-                        <span class="text-muted small d-block">Reason</span>
-                        <span class="text-danger fw-bold">{{ failedTransaction()?.message }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted small">Target Account</span>
-                        <span class="text-dark fw-bold small">{{ failedTransaction()?.toAccountId }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between border-top pt-2">
-                        <span class="text-muted small">Amount</span>
-                        <span class="text-dark fw-bold">
-                            {{ failedTransaction()?.amount | currency:'INR' }}
-                        </span>
-                    </div>
-                </div>
-
-                <button (click)="resetForm()" class="btn btn-dark rounded-pill px-5 py-3 fw-bold w-100 transition-all">
-                    Try Again
-                </button>
-            </div>
-
-            <!-- FORM VIEW -->
-            <div *ngIf="!transferResponse() && !failedTransaction()" class="form-screen fadeIn">
-                <div class="mb-4">
-                    <h2 class="form-title text-dark">Send Money</h2>
-                    <p class="form-subtitle">Secure, instant bank-to-bank transfer.</p>
-                </div>
-
-                <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
-                    <div class="mb-3">
-                        <label for="toAccountId"
-                            class="form-label text-dark fw-bold small text-uppercase mb-1">Recipient Account No.</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                            <input type="text" id="toAccountId" formControlName="toAccountId" accountMask
-                                   name="toAccountId" class="form-control" placeholder="XXXX-XXXX-XXXX">
-                        </div>
-                        <div class="error-message small text-danger">
-                            <div *ngIf="submitted() || transferForm.controls['toAccountId']?.touched">
-                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['required']">Account no. is required</div>
-                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['minlength'] || transferForm.controls['toAccountId']?.errors?.['maxLength']">
-                                    Account no. must be 12 digits
-                                </div>
-                                <div *ngIf="transferForm.controls['toAccountId']?.errors?.['notEqual']">
-                                    Cannot be your own account no.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="amount" class="form-label text-dark fw-bold small text-uppercase mb-1">
-                            Amount
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text fw-bold">&#8377;</span>
-                            <input type="number" id="amount" formControlName="amount" name="amount" class="form-control fw-bold text-primary" placeholder="0.00">
-                        </div>
-                        <div class="error-message small text-danger">
-                            <div *ngIf="submitted() || transferForm.controls['amount']?.touched">
-                                <div *ngIf="transferForm.controls['amount']?.errors?.['required']">Amount is required</div>
-                                <div *ngIf="transferForm.controls['amount']?.errors?.['min']">
-                                    Minimus possible amount is {{ '0.01' | currency:'INR' }}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-text mt-1 text-muted small px-1">
-                            <i class="bi bi-info-circle me-1"></i> Ensure balance covers the amount.
-                        </div>
-                    </div>
-
-                    <button type="submit" [disabled]="isLoading()"
-                        class="btn btn-primary w-100 py-3 rounded-pill shadow-sm fw-bold transition-all"
-                        style="background-color: #0369a1; border: none;">
-                        <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
-                        <span>{{ isLoading() ? 'Processing' : 'Pay' }}</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Right Side: Instructions -->
-        <div class="info-side">
-            <h3 class="h5 fw-bold mb-4 text-dark">How it works</h3>
-
-            <div class="instruction-item">
-                <div class="step-number">1</div>
-                <div>
-                    <p class="fw-bold mb-1 small uppercase">Enter Receiver ID</p>
-                    <p class="text-muted small mb-0">Provide the unique account identifier of the person you want to pay.</p>
-                </div>
-            </div>
-
-            <div class="instruction-item">
-                <div class="step-number">2</div>
-                <div>
-                    <p class="fw-bold mb-1 small uppercase">Specify Amount</p>
-                    <p class="text-muted small mb-0">Input the exact amount. Make sure it's within your available balance.</p>
-                </div>
-            </div>
-
-            <div class="instruction-item">
-                <div class="step-number">3</div>
-                <div>
-                    <p class="fw-bold mb-1 small uppercase">Verify & Send</p>
-                    <p class="text-muted small mb-0">Double check all details before clicking the confirm button.</p>
-                </div>
-            </div>
-
-            <!-- Balance Checker -->
-            <div class="balance-check-card shadow-sm">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-secondary small fw-bold">Your Balance</span>
-                    <button (click)="toggleBalance()" class="btn btn-link btn-sm p-0 text-decoration-none fw-bold"
-                        style="color: #0369a1;">
-                        {{ showBalance() ? 'Hide' : 'Check' }}
-                    </button>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-wallet2 text-primary"></i>
-                    <div class="h5 mb-0 fw-bold" [class.text-blur]="!showBalance()">
-                        {{ balance() | currency:'INR' }}
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- ===================== PROCESSING ===================== -->
+  <div *ngIf="isLoading()" class="result">
+    <div class="coin-loader"><i class="bi bi-coin"></i></div>
+    <h2 class="state-title">Sending {{ pending()?.amount | currency:'INR':'symbol':'1.0-0' }}…</h2>
+    <p class="state-sub">to {{ pending()?.to }}</p>
+    <div class="earn-chip" *ngIf="(pending()?.coins ?? 0) > 0">
+      <i class="bi bi-coin"></i> Earning {{ pending()?.coins }} SwiftCoin{{ pending()?.coins === 1 ? '' : 's' }}
     </div>
+  </div>
+
+  <!-- ===================== SUCCESS ===================== -->
+  <div *ngIf="transferResponse() && !isLoading()" class="result">
+    <svg class="check" viewBox="0 0 52 52" aria-hidden="true">
+      <circle class="check-c" cx="26" cy="26" r="24" />
+      <path class="check-m" d="M14 27 l8 8 l16 -16" />
+    </svg>
+    <h2 class="state-title">Payment Successful</h2>
+    <p class="state-sub">Your money is on its way</p>
+
+    <div class="coins-earned" *ngIf="earnedCoins > 0">
+      <i class="bi bi-coin"></i> +{{ earnedCoins }} SwiftCoin{{ earnedCoins === 1 ? '' : 's' }} earned
+    </div>
+
+    <div class="details">
+      <div class="detail-row"><span>Amount</span><strong>{{ transferResponse()?.amount | currency:'INR' }}</strong></div>
+      <div class="detail-row"><span>To account</span><strong>{{ transferResponse()?.creditedTo }}</strong></div>
+      <div class="detail-row"><span>From account</span><strong>{{ transferResponse()?.debitedFrom }}</strong></div>
+      <div class="detail-row"><span>Reference</span><strong class="ref">{{ transferResponse()?.transactionId }}</strong></div>
+      <div class="detail-row"><span>Status</span><strong class="ok"><i class="bi bi-check-circle-fill"></i> Completed</strong></div>
+    </div>
+
+    <button (click)="resetForm()" class="btn btn-dark rounded-3 py-2 px-4 fw-bold">Make another transfer</button>
+  </div>
+
+  <!-- ===================== FAILURE ===================== -->
+  <div *ngIf="failedTransaction() && !isLoading()" class="result">
+    <div class="cross"><i class="bi bi-x-lg"></i></div>
+    <h2 class="state-title">Transfer Failed</h2>
+    <p class="state-sub">{{ failedTransaction()?.message }}</p>
+
+    <div class="details">
+      <div class="detail-row"><span>To account</span><strong>{{ failedTransaction()?.toAccountId }}</strong></div>
+      <div class="detail-row"><span>Amount</span><strong>{{ failedTransaction()?.amount | currency:'INR' }}</strong></div>
+    </div>
+
+    <button (click)="resetForm()" class="btn btn-dark rounded-3 py-2 px-4 fw-bold">Try again</button>
+  </div>
+
+  <!-- ===================== FORM (single centered column, no box) ===================== -->
+  <div *ngIf="!isLoading() && !transferResponse() && !failedTransaction()" class="form-single">
+
+    <div class="form-head">
+      <h1 class="intro-title">Send Money</h1>
+    </div>
+
+    <form [formGroup]="transferForm" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Recipient -->
+      <div class="mb-3">
+        <label class="field-label" for="toAccountId">Recipient account number</label>
+        <div class="field-wrap">
+          <i class="bi bi-person-vcard field-icon"></i>
+          <input type="text" id="toAccountId" formControlName="toAccountId" accountMask inputmode="numeric"
+            class="form-control form-control-lg with-icon"
+            [class.is-invalid]="(submitted() || transferForm.controls['toAccountId'].touched) && transferForm.controls['toAccountId'].invalid"
+            placeholder="XXXX-XXXX-XXXX">
+        </div>
+        <div class="field-error"
+          *ngIf="(submitted() || transferForm.controls['toAccountId'].touched) && transferForm.controls['toAccountId'].invalid">
+          <span *ngIf="transferForm.controls['toAccountId'].errors?.['required']">Account number is required</span>
+          <span *ngIf="transferForm.controls['toAccountId'].errors?.['minlength'] || transferForm.controls['toAccountId'].errors?.['maxlength']">Account number must be 12 digits</span>
+          <span *ngIf="transferForm.controls['toAccountId'].errors?.['notEqual']">You can't transfer to your own account</span>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="mb-3">
+        <label class="field-label" for="amount">Amount</label>
+        <div class="field-wrap">
+          <span class="field-icon rupee">₹</span>
+          <input type="number" id="amount" formControlName="amount"
+            class="form-control form-control-lg with-icon amount-input"
+            [class.is-invalid]="(submitted() || transferForm.controls['amount'].touched) && transferForm.controls['amount'].invalid"
+            placeholder="0.00">
+        </div>
+        <div class="field-error"
+          *ngIf="(submitted() || transferForm.controls['amount'].touched) && transferForm.controls['amount'].invalid">
+          <span *ngIf="transferForm.controls['amount'].errors?.['required']">Amount is required</span>
+          <span *ngIf="transferForm.controls['amount'].errors?.['min']">Enter a valid amount</span>
+        </div>
+      </div>
+
+      <!-- Live reward line + Learn more (same row) -->
+      <div class="reward-row">
+        <div class="reward-line" [class.active]="coinsToEarn() > 0">
+          <i class="bi bi-coin"></i>
+          <span *ngIf="coinsToEarn() > 0">You'll earn <strong>{{ coinsToEarn() }} SwiftCoin{{ coinsToEarn() === 1 ? '' : 's' }}</strong></span>
+          <span *ngIf="coinsToEarn() === 0">Send over ₹100 to earn SwiftCoins</span>
+        </div>
+        <button type="button" class="learn-more" (click)="toggleInfo()" [attr.aria-expanded]="showInfo()">
+          Learn more
+          <i class="bi" [ngClass]="showInfo() ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+        </button>
+      </div>
+
+      <div class="reward-explainer" *ngIf="showInfo()">
+        <div class="re-head"><i class="bi bi-coin"></i> Earn coins on every transfer</div>
+        <p class="re-text">
+          Get <strong>1 coin for every ₹100</strong> you send, rounded down. The transfer must be
+          <strong>over ₹100</strong> and to another account.
+        </p>
+        <div class="re-examples">
+          <div><span>₹100</span><b>0 SwiftCoins</b></div>
+          <div><span>₹250</span><b>2 SwiftCoins</b></div>
+          <div><span>₹1,000</span><b>10 SwiftCoins</b></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-dark w-100 rounded-3 py-3 fw-bold mt-3 pay-btn">
+        <i class="bi bi-shield-lock-fill me-1"></i>
+        Pay{{ transferForm.get('amount')?.value ? ' ' + (transferForm.get('amount')?.value | currency:'INR':'symbol':'1.0-0') : '' }}
+      </button>
+    </form>
+  </div>
+
 </div>
