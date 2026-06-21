@@ -6,6 +6,7 @@ import com.banking.moneytransfer.service.CsvService;
 import com.banking.moneytransfer.service.SnowflakeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,8 +31,8 @@ public class EtlController {
 
     @PostMapping("/upload")
     public String upload(
-            @RequestParam LocalDateTime start,
-            @RequestParam LocalDateTime end
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
     ) throws Exception {
         log.info("Uploading csv files into the snowflake warehouse");
 

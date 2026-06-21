@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SwiftPay — Capstone Presentation</title>
+<style>
+  :root{
+    --green:#16a34a; --green-l:#22c55e; --green-d:#15803d;
+    --ink:#13241b; --muted:#5d6f64;
+    --card:#ffffff; --line:#e4ebe6; --bg:#f6faf7; --soft:#eef6f1;
+    --amber:#b9810b; --amber-ic:#fbeecb;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif; color:var(--ink);
+    background:radial-gradient(1000px 520px at 50% -10%, rgba(34,197,94,.09), transparent 60%), var(--bg);
+    min-height:100%;
+  }
+
+  .progress{position:fixed; top:0; left:0; right:0; height:6px; background:#e6efe9; z-index:20}
+  .progress-fill{height:100%; width:0; border-radius:0 4px 4px 0;
+    background:linear-gradient(90deg,var(--green-l),var(--green)); transition:width .45s ease}
+
+  .stage{min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:54px 18px 72px}
+  .slide{width:100%; display:flex; flex-direction:column; align-items:center; animation:fade .45s ease}
+
+  .footer{position:fixed; bottom:0; left:0; right:0; height:56px; z-index:20;
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    background:linear-gradient(0deg, var(--bg), transparent); color:var(--muted); font-size:.9rem}
+  .footer button{border:1px solid var(--line); background:#fff; color:var(--ink);
+    width:34px; height:34px; border-radius:9px; cursor:pointer; font-size:1.15rem; line-height:1; transition:all .2s}
+  .footer button:hover:not(:disabled){border-color:var(--green); color:var(--green)}
+  .footer button:disabled{opacity:.35; cursor:default}
+  #pageNum{font-weight:800; min-width:70px; text-align:center; color:var(--ink)}
+
+  /* Title slide */
+  .title-slide{text-align:center; max-width:720px}
+  .eyebrow{letter-spacing:.2em; text-transform:uppercase; color:var(--green); font-weight:800; font-size:.82rem; margin:0}
+  .big-brand{display:flex; align-items:center; justify-content:center; gap:14px;
+    font-size:3.4rem; font-weight:900; letter-spacing:-.03em; margin:.5rem 0 .15rem}
+  .big-brand span{color:var(--green)}
+  .big-brand .logo{width:54px; height:54px; color:var(--green); display:inline-flex}
+  .big-brand .logo svg{width:100%; height:100%; fill:currentColor}
+  .author{color:var(--muted); font-size:1.1rem; margin:.1rem 0 0}
+
+  /* Agenda slide */
+  .agenda{display:flex; flex-direction:column; gap:13px; width:100%; max-width:640px}
+  .ag{display:flex; align-items:center; gap:16px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:15px 20px; box-shadow:0 6px 18px -12px rgba(0,0,0,.25)}
+  .ag .num{width:34px; height:34px; flex:0 0 34px; border-radius:9px; display:grid; place-items:center;
+    font-weight:800; background:var(--soft); color:var(--green-d)}
+  .ag .ai{font-size:1.5rem}
+  .ag b{display:block; font-size:1.05rem}
+  .ag span{font-size:.85rem; color:var(--muted)}
+
+  /* Example slide (just the example) */
+  .example-slide{text-align:center; max-width:680px}
+  .ex-chip{display:inline-block; font-size:.74rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--amber); background:var(--amber-ic); border-radius:8px; padding:.25rem .8rem; margin-bottom:1.6rem}
+  .ex-line{font-size:2rem; font-weight:800; color:var(--ink); line-height:1.25}
+  .ex-line b{color:var(--green)}
+  .ex-chips{margin-top:1.1rem; display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+  .ex-chips code{background:var(--soft); border:1px solid #cdeed8; border-radius:8px; padding:.32rem .75rem;
+    font-family:'Consolas',monospace; font-size:1.05rem; color:#0f5132}
+  .ex-flow{display:flex; align-items:center; justify-content:center; gap:2rem; margin-top:.4rem}
+  .ex-party{display:flex; flex-direction:column; align-items:center}
+  .ex-av{width:78px; height:78px; border-radius:50%; background:var(--soft); border:1px solid var(--line);
+    display:grid; place-items:center; font-size:2.2rem}
+  .ex-party b{font-size:1.2rem; margin-top:.45rem}
+  .ex-party span{font-size:.85rem; color:var(--muted); font-family:'Consolas',monospace}
+  .ex-mid{display:flex; flex-direction:column; align-items:center; gap:.1rem}
+  .ex-amt{font-size:1.7rem; font-weight:900; color:var(--green)}
+  .ex-arrow{font-size:2rem; color:var(--green); line-height:.8}
+
+  /* Flow slide */
+  .slide-title{font-size:1.7rem; font-weight:800; margin:0 0 20px; text-align:center}
+  .slide-title .si{margin-right:8px}
+
+  .desc{width:100%; max-width:700px; min-height:160px; text-align:center;
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 24px; margin-bottom:26px;
+    box-shadow:0 10px 30px -18px rgba(0,0,0,.3); animation:fade .35s ease}
+  .desc .count{display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.05em;
+    color:var(--green); background:rgba(34,197,94,.12); border-radius:7px; padding:.18rem .6rem}
+  .desc h2{margin:.55rem 0 .2rem; font-size:1.3rem; font-weight:800}
+  .desc .points{display:inline-block; text-align:left; list-style:none; margin:.5rem 0 0; padding:0; max-width:640px}
+  .desc .points li{position:relative; padding-left:1.5rem; margin:.36rem 0; font-size:1rem; line-height:1.45; color:#33463c}
+  .desc .points li::before{content:'→'; position:absolute; left:0; top:.02rem; color:var(--green); font-weight:800}
+  .desc .points b{color:var(--green-d); font-weight:800}
+  .desc .points code{background:var(--soft); border:1px solid #cdeed8; border-radius:6px;
+    padding:.05rem .4rem; font-family:'Consolas',monospace; font-size:.9rem; color:#0f5132}
+
+  .rail{width:100%; display:flex; align-items:center; justify-content:center; padding:6px 6px 52px; overflow-x:auto}
+  .node{position:relative; flex:0 0 auto; display:flex; flex-direction:column; align-items:center; cursor:pointer}
+  .ic{width:60px; height:60px; border-radius:50%; display:grid; place-items:center; font-size:1.7rem;
+    background:#eef4f0; border:1px solid var(--line); color:#3a4d43;
+    opacity:.5; transform:scale(.92); transition:all .35s ease}
+  .nm{position:absolute; top:100%; margin-top:9px; width:100px; text-align:center;
+    font-size:.78rem; font-weight:600; color:var(--muted); line-height:1.15; transition:color .3s}
+  .tag{position:absolute; top:calc(100% + 34px); font-size:.6rem; font-weight:800; letter-spacing:.05em;
+    color:var(--amber); opacity:0; transition:opacity .3s}
+
+  .node.done .ic{opacity:1; border-color:rgba(34,197,94,.45); background:#dcf5e6; color:var(--green-d); transform:scale(.92)}
+  .node.active .ic{opacity:1; transform:scale(1.18); border-color:transparent; color:#fff;
+    background:linear-gradient(135deg,var(--green-l),var(--green));
+    box-shadow:0 0 0 5px rgba(34,197,94,.16), 0 16px 32px -12px rgba(22,163,74,.65)}
+  .node.active .nm{color:var(--ink); font-weight:800}
+  .node.db.active .ic{background:linear-gradient(135deg,#f4c869,var(--amber));
+    box-shadow:0 0 0 5px rgba(185,129,11,.16), 0 16px 32px -12px rgba(185,129,11,.5); animation:pulse 1s ease-in-out infinite}
+  .node.db.active .tag, .node.db.done .tag{opacity:1}
+
+  .conn{position:relative; flex:0 0 54px; height:3px; margin:0 3px; background:#dde7e1; border-radius:3px}
+  .conn .fill{position:absolute; inset:0; width:0; border-radius:3px;
+    background:linear-gradient(90deg,var(--green-l),var(--green)); transition:width .5s ease}
+  .conn.on .fill{width:100%}
+  .conn .spark{position:absolute; top:50%; left:0; width:11px; height:11px; border-radius:50%;
+    background:var(--green); box-shadow:0 0 12px 3px rgba(34,197,94,.7); transform:translate(-50%,-50%); opacity:0}
+  .conn.go .spark{animation:travel .5s ease forwards}
+
+  @keyframes pulse{0%,100%{transform:scale(1.18)}50%{transform:scale(1.3)}}
+  @keyframes travel{0%{left:0;opacity:1}100%{left:100%;opacity:0}}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+  @media (max-width:640px){ .big-brand{font-size:2.6rem} }
+</style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="pfill"></div></div>
+  <div class="stage" id="stage"></div>
+  <div class="footer">
+    <button id="pgPrev" title="Previous slide">‹</button>
+    <span id="pageNum">1 / 8</span>
+    <button id="pgNext" title="Next slide">›</button>
+  </div>
+
+<script>
+  const BANK = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8.277.084a.5.5 0 0 0-.554 0l-7.5 5A.5.5 0 0 0 .5 6h1.875v7H1.5a.5.5 0 0 0 0 1h13a.5.5 0 1 0 0-1h-.875V6H15.5a.5.5 0 0 0 .277-.916l-7.5-5zM12.375 6v7h-1.25V6zm-2.5 0v7h-1.25V6zm-2.5 0v7h-1.25V6zm-2.5 0v7h-1.25V6zM8 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2M.5 15a.5.5 0 0 0 0 1h15a.5.5 0 1 0 0-1z"/></svg>';
+
+  const flows = {
+    login: [
+      { icon:'👤', name:'John', title:'John signs in',
+        points:['John opens SwiftPay','Enters account number <code>1000-1000-1001</code>','Enters password <code>pwd@1001</code>','Clicks <b>Login</b>'] },
+      { icon:'🌐', name:'Angular app', title:'Angular builds the request',
+        points:['Joins the credentials as <code>1000-1000-1001:pwd@1001</code>','Base64-encodes the credentials → <code>base64(1000-1000-1001:pwd@1001)</code>','Calls <code>GET /api/v1/auth/login</code>','With header → <code>Authorization: Basic base64(1000-1000-1001:pwd@1001)</code>'] },
+      { icon:'🛡️', name:'Spring Security', title:'Security decodes the header',
+        points:['Reads the <code>Authorization</code> header','Decodes it back → <code>decode(base64(…)) = 1000-1000-1001:pwd@1001</code>','Splits into username <code>1000-1000-1001</code> + password <code>pwd@1001</code>'] },
+      { icon:'🗄️', name:'MySQL', db:true, title:'Fetch the account',
+        points:['Pulls account <code>1000-1000-1001</code> from MySQL','Reads its stored <b>BCrypt hash</b>'] },
+      { icon:'🔑', name:'Verify', title:'Check the password',
+        points:['Hashes the password from the header (<code>pwd@1001</code>)','Compares it with the stored BCrypt hash','If equal → <b>allowed</b> &nbsp; else → <b>rejected (401)</b>'] },
+      { icon:'✅', name:'Dashboard', title:'Logged in',
+        points:['Credentials valid → server returns <code>204</code>','John is sent to the <b>Dashboard</b>','The same token is reused on every later request'] },
+    ],
+    transaction: [
+      { icon:'👤', name:'John', title:'John starts a transfer',
+        points:['John (balance <code>₹15,500</code>) opens the Transfer page',"Enters Jane's account <code>1000-1000-1002</code>",'Enters the amount <code>₹250</code>','Clicks <b>Pay</b>'] },
+      { icon:'🌐', name:'Angular app', title:'Angular sends the request',
+        points:['Builds <code>POST /api/v1/transfers</code>','Body → <code>{ from:1000-1000-1001, to:1000-1000-1002, amount:250 }</code>','Creates a unique key <code>idempotencyKey: a1b2-c3d4</code> so a double-click can’t pay twice','Sends it with John’s login token in the <code>Authorization</code> header'] },
+      { icon:'🛡️', name:'Spring Security', title:'Identity & ownership',
+        points:['Confirms John’s login token is valid','Checks the sender <code>1000-1000-1001</code> is John’s own account ✅','So nobody else can transfer from John’s account'] },
+      { icon:'⚙️', name:'TransferService', title:'The transaction begins',
+        points:['Opens an <code>@Transactional</code> block for this <code>₹250</code> transfer (all-or-nothing)','Validates it → <code>250 &gt; 0</code> ✅ and <code>1000-1000-1001 ≠ 1000-1000-1002</code> ✅','Checks the key <code>a1b2-c3d4</code> was never used before ✅'] },
+      { icon:'💳', name:'Debit & credit', title:'Money moves (₹250)',
+        points:['Takes ₹250 from John → <code>15,500 − 250 = 15,250</code>','Adds ₹250 to Jane → <code>5,000 + 250 = 5,250</code>'] },
+      { icon:'🗄️', name:'MySQL', db:true, title:'Saved to the database',
+        points:['Writes John’s balance <code>15,250</code> and Jane’s <code>5,250</code>','Adds a <b>SUCCESS</b> transaction of <code>₹250</code> to their history'] },
+      { icon:'🎁', name:'RewardService', title:'John earns SwiftCoins',
+        points:['Checks the amount → <code>₹250 &gt; ₹100</code> → eligible ✅','Points = <code>floor(250 / 100) = 2</code>','Awards <b>2 SwiftCoins</b> to the sender, John'] },
+      { icon:'🗄️', name:'MySQL', db:true, title:'The reward is saved',
+        points:['Saves John’s <b>+2 SwiftCoins</b>','In the <b>same @Transactional block</b> as the ₹250 transfer','So the transfer and reward commit together — or not at all'] },
+      { icon:'✅', name:'Success', title:'Transfer complete',
+        points:['Everything commits at once','John <code>₹15,250</code> · Jane <code>₹5,250</code> · John <b>+2 SwiftCoins</b>','UI shows <b>Payment Successful</b>; navbar coins go <code>200 → 202</code>'] },
+    ],
+    reward: [
+      { icon:'👤', name:'John', title:'John picks a reward',
+        points:['Opens the Rewards store','Has <b>200 SwiftCoins</b> (<code>500 earned − 300 spent</code>)','Picks <b>Amazon 10% off</b> (costs <code>200</code>)','Clicks <b>Redeem</b>'] },
+      { icon:'🌐', name:'Angular app', title:'Angular sends the request',
+        points:['Calls <code>POST /promotions/1000-1000-1001/redeem</code>','Body → <code>{ promotionId: 3 }</code>','Sends John’s login token in the <code>Authorization</code> header'] },
+      { icon:'🛡️', name:'Spring Security', title:'Ownership check',
+        points:['Checks John owns account <code>1000-1000-1001</code> ✅'] },
+      { icon:'⚙️', name:'PromotionService', title:'Calculate SwiftCoins balance',
+        points:['Recounts from the database → earned = <code>500</code>, spent = <code>300</code>','Available SwiftCoins = <code>500 − 300 = 200</code>','The number from the browser is never trusted'] },
+      { icon:'⚖️', name:'Affordable?', title:'Can he afford it?',
+        points:['cost = <code>200</code>, available = <code>200</code>','<code>200 ≥ 200</code> → <b>allowed</b>  (else rejected)'] },
+      { icon:'🗄️', name:'MySQL', db:true, title:'The coupon is created',
+        points:['Inserts a <b>redemption</b> row','Generates code <code>AMA-5FN39XVH</code> + an expiry date','New balance = <code>500 − (300 + 200) = 0</code>'] },
+      { icon:'🎟️', name:'Coupon issued', title:'Reward unlocked',
+        points:['Shows the coupon <code>AMA-5FN39XVH</code>','Balance now <b>0</b>','Coupon saved under <b>My Coupons</b>'] },
+    ],
+  };
+
+  const examples = {
+    login: `<div class="example-slide">
+        <span class="ex-chip">Example</span>
+        <div class="ex-line">John signs in</div>
+        <div class="ex-chips"><code>1000-1000-1001</code><code>pwd@1001</code></div>
+      </div>`,
+    transaction: `<div class="example-slide">
+        <span class="ex-chip">Example</span>
+        <div class="ex-flow">
+          <div class="ex-party"><div class="ex-av">👤</div><b>John</b><span>1000-1000-1001</span></div>
+          <div class="ex-mid"><div class="ex-amt">₹250</div><div class="ex-arrow">→</div></div>
+          <div class="ex-party"><div class="ex-av">👤</div><b>Jane</b><span>1000-1000-1002</span></div>
+        </div>
+      </div>`,
+    reward: `<div class="example-slide">
+        <span class="ex-chip">Example</span>
+        <div class="ex-line">John redeems <b>Amazon 10% off</b></div>
+        <div class="ex-chips"><code>200 SwiftCoins</code></div>
+      </div>`,
+  };
+
+  const slides = [
+    { type:'title' },
+    { type:'agenda' },
+    { type:'example', flow:'login', icon:'🔐', heading:'Secure Login' },
+    { type:'flow', key:'login', icon:'🔐', heading:'Secure Login' },
+    { type:'example', flow:'transaction', icon:'💸', heading:'Making a Transaction' },
+    { type:'flow', key:'transaction', icon:'💸', heading:'Making a Transaction' },
+    { type:'example', flow:'reward', icon:'🎁', heading:'Redeeming a Reward' },
+    { type:'flow', key:'reward', icon:'🎁', heading:'Redeeming a Reward' },
+  ];
+
+  const stepCounts = slides.map(s => s.type === 'flow' ? flows[s.key].length : 1);
+  const totalUnits = stepCounts.reduce((a,b)=>a+b,0);
+  const offset = []; let acc = 0; for(const c of stepCounts){ offset.push(acc); acc += c; }
+
+  const stage = document.getElementById('stage');
+  const pfill = document.getElementById('pfill');
+  const pageNum = document.getElementById('pageNum');
+  const pgPrev = document.getElementById('pgPrev');
+  const pgNext = document.getElementById('pgNext');
+
+  let page = 0, step = 0;
+
+  const titleHTML = `
+    <div class="title-slide">
+      <p class="eyebrow">Capstone Project</p>
+      <div class="big-brand"><span class="logo">${BANK}</span>Swift<span>Pay</span></div>
+      <p class="author">by Ranjeev Ramprasad</p>
+    </div>`;
+
+  const agendaHTML = `
+    <div style="max-width:640px;width:100%">
+      <h1 class="slide-title">Agenda</h1>
+      <div class="agenda">
+        <div class="ag"><span class="num">1</span><span class="ai">🔐</span><div><b>Secure Login</b><span>How users sign in safely</span></div></div>
+        <div class="ag"><span class="num">2</span><span class="ai">💸</span><div><b>Making a Transaction</b><span>Transfer money &amp; earn SwiftCoins</span></div></div>
+        <div class="ag"><span class="num">3</span><span class="ai">🎁</span><div><b>Redeeming a Reward</b><span>Spend SwiftCoins on real coupons</span></div></div>
+        <div class="ag"><span class="num">4</span><span class="ai">🛠️</span><div><b>Tech stack</b><span>Angular · Spring Boot · MySQL</span></div></div>
+      </div>
+    </div>`;
+
+  function buildSlide(){
+    const slide = slides[page];
+    stage.innerHTML = '';
+    const w = document.createElement('div'); w.className = 'slide';
+
+    if(slide.type === 'title'){ w.innerHTML = titleHTML; stage.appendChild(w); }
+    else if(slide.type === 'agenda'){ w.innerHTML = agendaHTML; stage.appendChild(w); }
+    else if(slide.type === 'example'){
+      w.innerHTML = `<h1 class="slide-title"><span class="si">${slide.icon}</span>${slide.heading}</h1>` + examples[slide.flow];
+      stage.appendChild(w);
+    }
+    else {
+      w.innerHTML = `<h1 class="slide-title"><span class="si">${slide.icon}</span>${slide.heading}</h1>` +
+        `<div class="desc" id="desc"></div><div class="rail" id="rail"></div>`;
+      stage.appendChild(w);
+      const rail = w.querySelector('#rail');
+      flows[slide.key].forEach((s, idx) => {
+        if(idx > 0){
+          const c = document.createElement('div'); c.className='conn';
+          c.innerHTML = '<span class="fill"></span><span class="spark"></span>'; rail.appendChild(c);
+        }
+        const n = document.createElement('div'); n.className = 'node' + (s.db ? ' db' : '');
+        n.innerHTML = `<div class="ic">${s.icon}</div><div class="nm">${s.name}</div>` + (s.db ? '<div class="tag">MySQL</div>' : '');
+        n.addEventListener('click', () => { const f = idx > step; step = idx; applyStep(f ? step-1 : null); });
+        rail.appendChild(n);
+      });
+      applyStep(null);
+    }
+    updateChrome();
+  }
+
+  function applyStep(crossed){
+    if(slides[page].type !== 'flow') return;
+    const slide = slides[page];
+    const rail = stage.querySelector('#rail');
+    const desc = stage.querySelector('#desc');
+    const nodes = [...rail.querySelectorAll('.node')];
+    const conns = [...rail.querySelectorAll('.conn')];
+
+    nodes.forEach((n,k)=>{ n.classList.toggle('active', k===step); n.classList.toggle('done', k<step); });
+    conns.forEach((c,k)=> c.classList.toggle('on', k<step));
+    if(crossed != null && conns[crossed]){ const c = conns[crossed]; c.classList.remove('go'); void c.offsetWidth; c.classList.add('go'); }
+
+    const s = flows[slide.key][step];
+    desc.innerHTML = `<span class="count">Step ${step+1} / ${flows[slide.key].length}</span>` +
+      `<h2>${s.title}</h2><ul class="points">${s.points.map(p=>`<li>${p}</li>`).join('')}</ul>`;
+    desc.style.animation = 'none'; void desc.offsetWidth; desc.style.animation = 'fade .35s ease';
+    nodes[step].scrollIntoView({ inline:'center', block:'nearest' });
+    updateChrome();
+  }
+
+  function updateChrome(){
+    const slide = slides[page];
+    const done = offset[page] + (slide.type === 'flow' ? step + 1 : 1);
+    pfill.style.width = (done / totalUnits * 100) + '%';
+    pageNum.textContent = (page + 1) + ' / ' + slides.length;
+    pgPrev.disabled = page === 0;
+    pgNext.disabled = page === slides.length - 1;
+  }
+
+  function goPage(p){ if(p < 0 || p >= slides.length) return; page = p; step = 0; buildSlide(); }
+  function nextPage(){ goPage(page + 1); }
+  function prevPage(){ goPage(page - 1); }
+
+  function nextStep(){
+    const slide = slides[page];
+    if(slide.type !== 'flow'){ nextPage(); return; }
+    if(step < flows[slide.key].length - 1){ step++; applyStep(step - 1); }
+    else nextPage();
+  }
+  function prevStep(){
+    const slide = slides[page];
+    if(slide.type === 'flow' && step > 0){ step--; applyStep(null); }
+    else prevPage();
+  }
+
+  pgPrev.addEventListener('click', () => { prevPage(); pgPrev.blur(); });
+  pgNext.addEventListener('click', () => { nextPage(); pgNext.blur(); });
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){ e.preventDefault(); nextPage(); }
+    else if(e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); nextStep(); }
+    else if(e.key === 'ArrowLeft'){ e.preventDefault(); prevStep(); }
+    else if(e.key === 'Backspace'){ e.preventDefault(); prevPage(); }
+  });
+
+  buildSlide();
+</script>
+</body>
+</html>
