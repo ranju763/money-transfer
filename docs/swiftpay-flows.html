@@ -75,6 +75,13 @@
   .ex-amt{font-size:1.7rem; font-weight:900; color:var(--green)}
   .ex-arrow{font-size:2rem; color:var(--green); line-height:.8}
 
+  /* Demo slide */
+  .demo-slide{text-align:center}
+  .demo-ic{width:96px; height:96px; border-radius:50%; margin:0 auto 1.5rem; display:grid; place-items:center;
+    font-size:2.6rem; color:#fff; background:linear-gradient(135deg,var(--green-l),var(--green));
+    box-shadow:0 18px 44px -14px rgba(22,163,74,.6)}
+  .demo-title{font-size:2.7rem; font-weight:900; letter-spacing:-.02em; margin:0}
+
   /* Flow slide */
   .slide-title{font-size:1.7rem; font-weight:800; margin:0 0 20px; text-align:center}
   .slide-title .si{margin-right:8px}
@@ -221,6 +228,7 @@
     { type:'flow', key:'transaction', icon:'💸', heading:'Making a Transaction' },
     { type:'example', flow:'reward', icon:'🎁', heading:'Redeeming a Reward' },
     { type:'flow', key:'reward', icon:'🎁', heading:'Redeeming a Reward' },
+    { type:'demo' },
   ];
 
   const stepCounts = slides.map(s => s.type === 'flow' ? flows[s.key].length : 1);
@@ -260,6 +268,10 @@
 
     if(slide.type === 'title'){ w.innerHTML = titleHTML; stage.appendChild(w); }
     else if(slide.type === 'agenda'){ w.innerHTML = agendaHTML; stage.appendChild(w); }
+    else if(slide.type === 'demo'){
+      w.innerHTML = `<div class="demo-slide"><div class="demo-ic">▶</div><h1 class="demo-title">Let’s look at the Demo</h1></div>`;
+      stage.appendChild(w);
+    }
     else if(slide.type === 'example'){
       w.innerHTML = `<h1 class="slide-title"><span class="si">${slide.icon}</span>${slide.heading}</h1>` + examples[slide.flow];
       stage.appendChild(w);
